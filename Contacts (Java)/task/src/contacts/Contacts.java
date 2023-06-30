@@ -4,9 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Contacts {
-    private List<Contact> contacts = new ArrayList<>();
+    private final List<Record> records = new ArrayList<>();
 
-    public void addContact(Contact contact) {
-        contacts.add(contact);
+    public void addRecord(Record record) {
+        records.add(record);
+    }
+
+    public Record getRecord(int index) {
+        return records.get(index);
+    }
+
+    public void removeRecord(int index) {
+        records.remove(index);
+    }
+
+    public int countRecords() {
+        return records.size();
     }
 }

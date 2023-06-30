@@ -6,18 +6,23 @@ public class Main {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
-        Contact person = new Contact();
-        System.out.println("Enter the name of the person:");
-        person.setName(in.nextLine());
-        System.out.println("Enter the surname of the person:");
-        person.setSurname(in.nextLine());
-        System.out.println("Enter the number:");
-        person.setNumber(in.nextLine());
-
-        System.out.println("A record created!");
+        ContactService contactService = new ContactService(in, System.out);
 
         Contacts contacts = new Contacts();
-        contacts.addContact(person);
-        System.out.println("A Phone Book with a single record created!");
+
+        boolean exit = false;
+        do {
+            System.out.print("Enter action (add, remove, edit, count, list, exit): ");
+            switch (in.nextLine().toLowerCase()) {
+                case "add" -> contactService.addRecord(contacts);
+                case "count" -> contactService.countRecords(contacts);
+                case "list" -> contactService.listRecords(contacts);
+                case "edit" -> contactService.editRecord(contacts);
+                case "remove" -> contactService.removeRecord(contacts);
+                case "exit" -> exit = true;
+                default -> System.out.println("Please select a listed action.");
+            }
+        } while (!exit);
+
     }
 }

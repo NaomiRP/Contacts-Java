@@ -31,6 +31,12 @@ public abstract class Record {
 
     public abstract String getSummary();
 
+    public abstract String getSearchData();
+
+    protected String getNumber() {
+        return number;
+    }
+
     protected boolean setNumber(String number) {
         if (validateNumber(number)) {
             this.number = number;

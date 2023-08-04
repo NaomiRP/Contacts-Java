@@ -26,6 +26,10 @@ public class Person extends Record {
         return name + " " + surname;
     }
 
+    public String getSearchData() {
+        return name + surname + birthDate + gender + getNumber();
+    }
+
     public boolean setField(String field, String value) {
         field = field.toLowerCase();
         if (!fields.contains(field))

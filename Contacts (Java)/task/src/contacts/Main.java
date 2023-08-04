@@ -8,21 +8,20 @@ public class Main {
 
         ContactService contactService = new ContactService(in, System.out);
 
+        System.out.println("open phonebook.db");
         Contacts contacts = new Contacts();
 
         boolean exit = false;
         do {
-            System.out.print("Enter action (add, remove, edit, count, info, exit): ");
+            System.out.print("\n[menu] Enter action (add, list, search, count, exit): ");
             switch (in.nextLine().toLowerCase()) {
                 case "add" -> contactService.addRecord(contacts);
                 case "count" -> contactService.countRecords(contacts);
-                case "info" -> contactService.listRecords(contacts);
-                case "edit" -> contactService.editRecord(contacts);
-                case "remove" -> contactService.removeRecord(contacts);
+                case "list" -> contactService.listRecords(contacts);
+                case "search" -> contactService.searchRecords(contacts);
                 case "exit" -> exit = true;
                 default -> System.out.println("Please select a listed action.");
             }
-            System.out.println();
         } while (!exit);
 
     }

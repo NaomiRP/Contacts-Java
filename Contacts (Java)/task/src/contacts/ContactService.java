@@ -46,11 +46,36 @@ public class ContactService {
             return;
         }
         displayRecords(contacts, count);
-        out.print("Enter index to show info: ");
-        int num = in.nextInt();
-        in.nextLine();
-        if (num - 1 <= count) {
-            out.println(contacts.getRecord(num - 1));
+        out.print("\n[list] Enter action ([number], back): ");
+        if (in.hasNextInt()) {
+            int num = in.nextInt();
+            in.nextLine();
+            if (num - 1 <= count) {
+                displayRecord(contacts, contacts.getRecord(num - 1));
+            }
+        } else {
+            in.nextLine();
+        }
+    }
+
+    public void searchRecords(Contacts contacts) {
+        out.print("Enter search query: ");
+        List<Record> results = contacts.searchRecords(in.nextLine());
+        int count = results.size();
+        out.printf("Found %d result%s:", count, count == 1 ? "" : "s");
+        for (int i = 0; i < count; i++) {
+            out.printf("%d. %s\n", i + 1, results.get(i).getSummary());
+        }
+        out.print("\n[search] Enter action ([number], back, again): ");
+        if (in.hasNextInt()) {
+            int num = in.nextInt();
+            in.nextLine();
+            if (num - 1 <= count) {
+                displayRecord(contacts, results.get(num - 1));
+            }
+        } else {
+            if ("again".equals(in.nextLine()))
+                searchRecords(contacts);
         }
     }
 
@@ -60,22 +85,18 @@ public class ContactService {
         }
     }
 
-    public void editRecord(Contacts contacts) {
-        int count = contacts.countRecords();
-        if (count == 0) {
-            out.println("No records to edit!");
-            return;
+    private void displayRecord(Contacts contacts, Record record) {
+        out.println(record);
+        List<String> actions = List.of("edit", "delete", "menu");
+        out.printf("\n[record] Enter action (%s): ", actions);
+        String action = in.nextLine();
+        switch (action) {
+            case "edit" -> editRecord(contacts, record);
+            case "delete" -> removeRecord(contacts, record);
         }
-        displayRecords(contacts, count);
-        out.print("Select a record: ");
-        int num = in.nextInt();
-        while (num > count) {
-            in.nextLine();
-            out.print("Please enter the number of the record to edit: ");
-            num = in.nextInt();
-        }
-        in.nextLine();
-        Record record = contacts.getRecord(num - 1);
+    }
+
+    private void editRecord(Contacts contacts, Record record) {
         List<String> fields = record.getFields();
         out.printf("Select a field (%s): ", fields);
         String option = in.next().toLowerCase();
@@ -91,24 +112,12 @@ public class ContactService {
             out.println("Wrong " + option + " format!");
             record.setNumber(null);
         }
-        out.println("The record updated!");
+        out.println("Saved");
+        displayRecord(contacts, record);
     }
 
-    public void removeRecord(Contacts contacts) {
-        int count = contacts.countRecords();
-        if (count == 0) {
-            out.println("No records to remove!");
-            return;
-        }
-        listRecords(contacts);
-        out.print("Select a record: ");
-        int num = in.nextInt();
-        while (num > count) {
-            in.nextLine();
-            out.print("Please enter the number of the record to delete: ");
-            num = in.nextInt();
-        }
-        contacts.removeRecord(num - 1);
+    public void removeRecord(Contacts contacts, Record record) {
+        contacts.removeRecord(record);
         out.println("\nThe record removed!");
     }
 }

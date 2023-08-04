@@ -16,6 +16,10 @@ public class Organization extends Record {
         return organizationName;
     }
 
+    public String getSearchData() {
+        return organizationName + address + getNumber();
+    }
+
     public List<String> getFields() {
         return fields;
     }

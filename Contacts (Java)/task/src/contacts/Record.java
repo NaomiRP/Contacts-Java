@@ -1,34 +1,37 @@
 package contacts;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Record {
-    private String name;
-    private String surname;
+public abstract class Record {
+    private static final List<String> types = List.of("person", "organization");
+
     private String number;
+    private final LocalDateTime created;
+    private LocalDateTime updated;
 
-    public String getName() {
-        return name;
+    protected Record() {
+        created = LocalDateTime.now();
+        updated = created;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    protected void recordUpdated() {
+        updated = LocalDateTime.now();
     }
 
-    public String getSurname() {
-        return surname;
+    public abstract List<String> getFields();
+
+    public abstract boolean setField(String field, String value);
+
+    public static List<String> getTypes() {
+        return types;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
+    public abstract String getSummary();
 
-    public String getNumber() {
-        return number;
-    }
-
-    public boolean setNumber(String number) {
+    protected boolean setNumber(String number) {
         if (validateNumber(number)) {
             this.number = number;
             return true;
@@ -75,6 +78,8 @@ public class Record {
 
     @Override
     public String toString() {
-        return name + " " + surname + ", " + (number != null ? number : "[no number]");
+        return "Number: " + (number != null ? number : "[no data]") + '\n' +
+                "Time created: " + created + '\n' +
+                "Time last edit: " + updated;
     }
 }

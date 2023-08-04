@@ -16,14 +16,20 @@ public class ContactService {
 
 
     public void addRecord(Contacts contacts) {
-        Record record = new Record();
-        out.print("Enter the name: ");
-        record.setName(in.nextLine());
-        out.print("Enter the surname: ");
-        record.setSurname(in.nextLine());
-        out.print("Enter the number: ");
-        if (!record.setNumber(in.nextLine()))
-            out.println("Wrong number format!");
+        out.printf("Enter the type (%s): ", Record.getTypes());
+        String type = in.nextLine().toLowerCase();
+        Record record;
+        if (Record.getTypes().get(0).equals(type)) {
+            record = new Person();
+        } else {
+            record = new Organization();
+        }
+        for (String field : record.getFields()) {
+            out.printf("Enter the %s: ", field);
+            String value = in.nextLine();
+            if (!record.setField(field, value))
+                out.println("Bad " + field + "!");
+        }
         contacts.addRecord(record);
         out.println("The record added.");
     }
@@ -39,8 +45,18 @@ public class ContactService {
             out.println("No records to list!");
             return;
         }
+        displayRecords(contacts, count);
+        out.print("Enter index to show info: ");
+        int num = in.nextInt();
+        in.nextLine();
+        if (num - 1 <= count) {
+            out.println(contacts.getRecord(num - 1));
+        }
+    }
+
+    private void displayRecords(Contacts contacts, int count) {
         for (int i = 0; i < count; i++) {
-            out.printf("%d. %s\n", i + 1, contacts.getRecord(i));
+            out.printf("%d. %s\n", i + 1, contacts.getRecord(i).getSummary());
         }
     }
 
@@ -50,7 +66,7 @@ public class ContactService {
             out.println("No records to edit!");
             return;
         }
-        listRecords(contacts);
+        displayRecords(contacts, count);
         out.print("Select a record: ");
         int num = in.nextInt();
         while (num > count) {
@@ -60,10 +76,10 @@ public class ContactService {
         }
         in.nextLine();
         Record record = contacts.getRecord(num - 1);
-        out.print("Select a field (name, surname, number): ");
+        List<String> fields = record.getFields();
+        out.printf("Select a field (%s): ", fields);
         String option = in.next().toLowerCase();
-        List<String> options = List.of("name", "surname", "number");
-        while (!options.contains(option)) {
+        while (!fields.contains(option)) {
             in.nextLine();
             out.print("Please select a listed field: ");
             option = in.next().toLowerCase();
@@ -71,15 +87,9 @@ public class ContactService {
         in.nextLine();
         out.printf("Enter %s: ", option);
         String data = in.nextLine();
-        switch (option) {
-            case "name" -> record.setName(data);
-            case "surname" -> record.setSurname(data);
-            case "number" -> {
-                if (!record.setNumber(data)) {
-                    out.println("Wrong number format!");
-                    record.setNumber(null);
-                }
-            }
+        if (!record.setField(option, data)) {
+            out.println("Wrong " + option + " format!");
+            record.setNumber(null);
         }
         out.println("The record updated!");
     }
